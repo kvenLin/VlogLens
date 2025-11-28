@@ -1,0 +1,5 @@
+{
+  "name": "VlogLens - 视觉日记生成器",
+  "description": "利用 Gemini 的视觉理解能力，将你的视频素材瞬间转化为图文并茂的视觉日记和小红书文案。",
+  "requestFramePermissions": []
+}
