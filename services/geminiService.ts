@@ -1,17 +1,51 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { GeneratedContent, ProcessedFrame } from "../types";
 
+const API_KEY_STORAGE_KEY = 'vloglens_gemini_api_key';
+
 // 延迟初始化 SDK，避免在模块加载时就报错导致整个应用崩溃
 let ai: GoogleGenAI | null = null;
+let currentApiKey: string | null = null;
+
+// 获取 API Key：优先从 localStorage，其次从环境变量
+export function getApiKey(): string | null {
+  // 优先使用 localStorage 中的 key
+  const storedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+  if (storedKey) {
+    return storedKey;
+  }
+  // 其次使用环境变量（构建时注入）
+  return process.env.API_KEY || null;
+}
+
+// 检查是否已配置 API Key
+export function hasApiKey(): boolean {
+  return !!getApiKey();
+}
+
+// 重置 AI 实例（当 API Key 变化时调用）
+export function resetAI(): void {
+  ai = null;
+  currentApiKey = null;
+}
 
 function getAI(): GoogleGenAI {
-  if (!ai) {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error("API_KEY 未配置。请在环境变量中设置 GEMINI_API_KEY。");
-    }
-    ai = new GoogleGenAI({ apiKey });
+  const apiKey = getApiKey();
+  
+  if (!apiKey) {
+    throw new Error("请先设置 Gemini API 密钥。点击右上角的设置按钮进行配置。");
   }
+  
+  // 如果 API Key 变化了，重新初始化
+  if (ai && currentApiKey !== apiKey) {
+    ai = null;
+  }
+  
+  if (!ai) {
+    ai = new GoogleGenAI({ apiKey });
+    currentApiKey = apiKey;
+  }
+  
   return ai;
 }
 

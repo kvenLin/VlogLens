@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import VideoUploader from './components/VideoUploader';
 import ProcessingStatus from './components/ProcessingStatus';
 import DiaryCard from './components/DiaryCard';
+import ApiKeySettings from './components/ApiKeySettings';
 import { extractFramesFromVideo } from './utils/videoUtils';
-import { analyzeVideoFrames } from './services/geminiService';
+import { analyzeVideoFrames, hasApiKey, resetAI } from './services/geminiService';
 import { AppState, GeneratedContent, ProcessedFrame } from './types';
 
 function App() {
@@ -12,6 +13,18 @@ function App() {
   const [frames, setFrames] = useState<ProcessedFrame[]>([]);
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKeyConfigured, setApiKeyConfigured] = useState(false);
+
+  // 检查 API Key 是否已配置
+  useEffect(() => {
+    setApiKeyConfigured(hasApiKey());
+  }, []);
+
+  const handleApiKeySave = (apiKey: string) => {
+    resetAI(); // 重置 AI 实例以使用新的 key
+    setApiKeyConfigured(!!apiKey);
+  };
 
   const handleFileSelect = async (file: File) => {
     try {
@@ -62,8 +75,31 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans relative">
       
+      {/* Settings Button - Fixed Position */}
+      <button
+        onClick={() => setShowSettings(true)}
+        className={`fixed top-4 right-4 p-3 rounded-xl shadow-lg transition-all hover:scale-105 z-40
+          ${apiKeyConfigured 
+            ? 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100' 
+            : 'bg-indigo-600 text-white hover:bg-indigo-700 animate-pulse'
+          }`}
+        title={apiKeyConfigured ? '修改 API 密钥' : '设置 API 密钥'}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+
+      {/* API Key Settings Modal */}
+      <ApiKeySettings
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        onSave={handleApiKeySave}
+      />
+
       {/* Header */}
       <div className="text-center mb-10 max-w-2xl">
         <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-sm mb-4 border border-indigo-50">
