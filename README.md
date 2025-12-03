@@ -1,40 +1,120 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+# 📷 VlogLens
+
+**你的私人 AI 视频日记助手**
+
+将随手拍的视频片段，一键转化为图文并茂的视觉日记和小红书风格种草文案
+
+[![Deploy to GitHub Pages](https://github.com/kvenLin/VlogLens/actions/workflows/deploy.yml/badge.svg)](https://github.com/kvenLin/VlogLens/actions/workflows/deploy.yml)
+[![Live Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://kvenlin.github.io/VlogLens/)
+
+[在线体验](https://kvenlin.github.io/VlogLens/) · [获取 API Key](https://aistudio.google.com/apikey)
+
 </div>
 
-# Run and deploy your AI Studio app
+---
 
-This contains everything you need to run your app locally.
+## ✨ 功能特点
 
-View your app in AI Studio: https://ai.studio/apps/drive/1tGf7yY1d3s-vBVk-Ra6b91KQggveITqV
+- 🎬 **视频帧提取** — 自动从视频中均匀抽取关键帧，无需上传完整视频
+- 🤖 **AI 智能分析** — 基于 Gemini 2.5 Flash 理解视频内容，生成结构化日记
+- 📝 **视觉日记生成** — 时间轴式图文排版，每个时刻配上精选截图
+- 📱 **种草文案** — 自动生成小红书/Instagram 风格的社交媒体文案
+- 🔒 **隐私安全** — 视频纯前端处理，不上传任何服务器
+- 💾 **本地存储** — API Key 保存在浏览器本地，刷新不丢失
 
-## Run Locally
+## 🚀 快速开始
 
-**Prerequisites:**  Node.js
+### 在线使用
 
+1. 访问 [https://kvenlin.github.io/VlogLens/](https://kvenlin.github.io/VlogLens/)
+2. 点击右上角设置按钮，输入你的 [Gemini API Key](https://aistudio.google.com/apikey)
+3. 拖入或选择一个视频文件
+4. 等待 AI 生成你的视觉日记！
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 本地开发
 
-## Deploy to GitHub Pages
+```bash
+# 克隆项目
+git clone https://github.com/kvenLin/VlogLens.git
+cd VlogLens
 
-### 方式一：本地手动部署
+# 安装依赖
+npm install
 
-1. 运行 `npm run predeploy`（等价于 `npm run build`）产出最新 `dist/`。
-2. 执行 `npm run deploy`，`gh-pages` 会将 `dist` 推送到仓库的 `gh-pages` 分支。
-3. 在 GitHub 仓库 **Settings → Pages** 中，将 Source 设为 `gh-pages` 分支根目录，几分钟后即可通过 <https://kvenlin.github.io/VlogLens/> 访问。
+# 启动开发服务器
+npm run dev
+```
 
-> 注意：部署前请确保 `vite.config.ts` 的 `base` 已设置为 `/VlogLens/`，否则静态资源路径会错误。
+访问 http://localhost:3000 查看应用。
 
-### 方式二：GitHub Actions 自动部署
+## 🛠️ 技术栈
 
-本仓库包含 `.github/workflows/deploy.yml`，push 到 `main` 或手动触发 workflow 即可：
+| 技术 | 用途 |
+|------|------|
+| React 19 | 前端框架 |
+| TypeScript | 类型安全 |
+| Vite | 构建工具 |
+| Tailwind CSS | 样式 (CDN) |
+| Google Gemini 2.5 Flash | AI 模型 |
+| GitHub Actions | 自动部署 |
 
-1. 在仓库 Settings → Pages 中确认 Source 选择 **GitHub Actions**。
-2. 提交代码到 `main`，Actions 会自动执行 `npm ci && npm run build` 并将 `dist` 发布到 Pages。
-3. Workflow 内使用的 Node 版本为 20，可根据需要调整 `node-version`。
+## 📁 项目结构
 
-如需自定义域名，可在根目录添加 `CNAME` 文件，并在 GitHub Pages 中设置自定义域。 
+```
+VlogLens/
+├── components/
+│   ├── ApiKeySettings.tsx   # API 密钥设置弹窗
+│   ├── DiaryCard.tsx        # 日记卡片展示
+│   ├── ProcessingStatus.tsx # 处理进度状态
+│   └── VideoUploader.tsx    # 视频上传组件
+├── services/
+│   └── geminiService.ts     # Gemini API 调用
+├── utils/
+│   └── videoUtils.ts        # 视频帧提取工具
+├── App.tsx                  # 主应用组件
+├── types.ts                 # TypeScript 类型定义
+└── index.html               # 入口 HTML
+```
+
+## 🔐 API Key 配置
+
+### 方式一：浏览器设置（推荐）
+
+点击页面右上角的设置按钮，输入你的 Gemini API Key。密钥将安全存储在浏览器的 localStorage 中。
+
+### 方式二：环境变量
+
+创建 `.env.local` 文件：
+
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+## 📦 部署
+
+### GitHub Actions 自动部署
+
+本项目已配置 GitHub Actions，推送到 `main` 分支会自动构建并部署到 GitHub Pages。
+
+如需配置 API Key 到构建中：
+1. 进入仓库 Settings → Secrets and variables → Actions
+2. 添加 `GEMINI_API_KEY` secret
+
+### 手动部署
+
+```bash
+npm run build    # 构建生产版本
+npm run deploy   # 部署到 gh-pages 分支
+```
+
+## 📄 License
+
+MIT
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ and Gemini AI</sub>
+</div>
