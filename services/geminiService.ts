@@ -1,13 +1,19 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { GeneratedContent, ProcessedFrame } from "../types";
 
-const processEnvApiKey = process.env.API_KEY;
+// 延迟初始化 SDK，避免在模块加载时就报错导致整个应用崩溃
+let ai: GoogleGenAI | null = null;
 
-if (!processEnvApiKey) {
-  console.error("API_KEY is missing from environment variables.");
+function getAI(): GoogleGenAI {
+  if (!ai) {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      throw new Error("API_KEY 未配置。请在环境变量中设置 GEMINI_API_KEY。");
+    }
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
 }
-
-const ai = new GoogleGenAI({ apiKey: processEnvApiKey });
 
 const responseSchema: Schema = {
   type: Type.OBJECT,
@@ -74,7 +80,7 @@ export const analyzeVideoFrames = async (frames: ProcessedFrame[]): Promise<Gene
       请确保 frame_index 是准确的，不要越界。图片索引从 0 开始。
     `;
 
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: 'gemini-2.5-flash',
       contents: {
         role: 'user',
