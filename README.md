@@ -37,4 +37,4 @@ View your app in AI Studio: https://ai.studio/apps/drive/1tGf7yY1d3s-vBVk-Ra6b91
 2. 提交代码到 `main`，Actions 会自动执行 `npm ci && npm run build` 并将 `dist` 发布到 Pages。
 3. Workflow 内使用的 Node 版本为 20，可根据需要调整 `node-version`。
 
-如需自定义域名，可在根目录添加 `CNAME` 文件，并在 GitHub Pages 中设置自定义域。
+如需自定义域名，可在根目录添加 `CNAME` 文件，并在 GitHub Pages 中设置自定义域。 
